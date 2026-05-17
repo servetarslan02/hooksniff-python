@@ -4,9 +4,17 @@ import typing as t
 from dataclasses import dataclass, field
 
 from .authentication import Authentication, AuthenticationAsync
+from .background_task import BackgroundTask, BackgroundTaskAsync
 from .client import AuthenticatedClient
 from .endpoint import Endpoint, EndpointAsync
+from .environment import Environment, EnvironmentAsync
 from .event_type import EventType, EventTypeAsync
+from .operational_webhook import OperationalWebhook, OperationalWebhookAsync
+from .message_poller import MessagePoller, MessagePollerAsync
+from .inbound import Inbound, InboundAsync
+from .connector import Connector, ConnectorAsync
+from .integration import Integration, IntegrationAsync
+from .stream import Stream, StreamAsync
 from .message import Message, MessageAsync
 from .message_attempt import MessageAttempt, MessageAttemptAsync
 from .statistics import Statistics, StatisticsAsync
@@ -53,8 +61,40 @@ class HookSniffAsync(ClientBase):
         return AuthenticationAsync(self._client)
 
     @property
+    def background_task(self) -> BackgroundTaskAsync:
+        return BackgroundTaskAsync(self._client)
+
+    @property
     def endpoint(self) -> EndpointAsync:
         return EndpointAsync(self._client)
+
+    @property
+    def environment(self) -> EnvironmentAsync:
+        return EnvironmentAsync(self._client)
+
+    @property
+    def operational_webhook(self) -> OperationalWebhookAsync:
+        return OperationalWebhookAsync(self._client)
+
+    @property
+    def message_poller(self) -> MessagePollerAsync:
+        return MessagePollerAsync(self._client)
+
+    @property
+    def inbound(self) -> InboundAsync:
+        return InboundAsync(self._client)
+
+    @property
+    def connector(self) -> ConnectorAsync:
+        return ConnectorAsync(self._client)
+
+    @property
+    def integration(self) -> IntegrationAsync:
+        return IntegrationAsync(self._client)
+
+    @property
+    def stream(self) -> StreamAsync:
+        return StreamAsync(self._client)
 
     @property
     def event_type(self) -> EventTypeAsync:
@@ -79,8 +119,40 @@ class HookSniff(ClientBase):
         return Authentication(self._client)
 
     @property
+    def background_task(self) -> BackgroundTask:
+        return BackgroundTask(self._client)
+
+    @property
     def endpoint(self) -> Endpoint:
         return Endpoint(self._client)
+
+    @property
+    def environment(self) -> Environment:
+        return Environment(self._client)
+
+    @property
+    def operational_webhook(self) -> OperationalWebhook:
+        return OperationalWebhook(self._client)
+
+    @property
+    def message_poller(self) -> MessagePoller:
+        return MessagePoller(self._client)
+
+    @property
+    def inbound(self) -> Inbound:
+        return Inbound(self._client)
+
+    @property
+    def connector(self) -> Connector:
+        return Connector(self._client)
+
+    @property
+    def integration(self) -> Integration:
+        return Integration(self._client)
+
+    @property
+    def stream(self) -> Stream:
+        return Stream(self._client)
 
     @property
     def event_type(self) -> EventType:
