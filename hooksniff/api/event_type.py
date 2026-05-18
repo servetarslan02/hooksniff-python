@@ -84,7 +84,7 @@ class EventTypeAsync(ApiBase):
         """Return the list of event types."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/event-type",
+            path="/v1/events",
             path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
@@ -103,7 +103,7 @@ class EventTypeAsync(ApiBase):
         This operation does not preserve the description and schemas."""
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/event-type",
+            path="/v1/events",
             path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
@@ -123,7 +123,7 @@ class EventTypeAsync(ApiBase):
         top-level."""
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/event-type/import/openapi",
+            path="/v1/events/import/openapi",
             path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
@@ -137,7 +137,7 @@ class EventTypeAsync(ApiBase):
         """Get an event type."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -150,7 +150,7 @@ class EventTypeAsync(ApiBase):
         """Update an event type."""
         response = await self._request_asyncio(
             method="put",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -173,7 +173,7 @@ class EventTypeAsync(ApiBase):
         [create operation](#operation/create_event_type_api_v1_event_type__post)."""
         await self._request_asyncio(
             method="delete",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -187,7 +187,7 @@ class EventTypeAsync(ApiBase):
         """Partially update an event type."""
         response = await self._request_asyncio(
             method="patch",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -205,7 +205,7 @@ class EventType(ApiBase):
         """Return the list of event types."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/event-type",
+            path="/v1/events",
             path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
@@ -224,7 +224,7 @@ class EventType(ApiBase):
         This operation does not preserve the description and schemas."""
         response = self._request_sync(
             method="post",
-            path="/api/v1/event-type",
+            path="/v1/events",
             path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
@@ -244,7 +244,7 @@ class EventType(ApiBase):
         top-level."""
         response = self._request_sync(
             method="post",
-            path="/api/v1/event-type/import/openapi",
+            path="/v1/events/import/openapi",
             path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
@@ -258,7 +258,7 @@ class EventType(ApiBase):
         """Get an event type."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -271,7 +271,7 @@ class EventType(ApiBase):
         """Update an event type."""
         response = self._request_sync(
             method="put",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -294,7 +294,7 @@ class EventType(ApiBase):
         [create operation](#operation/create_event_type_api_v1_event_type__post)."""
         self._request_sync(
             method="delete",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },
@@ -308,7 +308,7 @@ class EventType(ApiBase):
         """Partially update an event type."""
         response = self._request_sync(
             method="patch",
-            path="/api/v1/event-type/{event_type_name}",
+            path="/v1/events/{event_type_name}",
             path_params={
                 "event_type_name": event_type_name,
             },

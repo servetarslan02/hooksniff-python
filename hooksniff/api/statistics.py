@@ -1,4 +1,4 @@
-# This file is @generated
+# Adapted for HookSniff API
 import typing as t
 from dataclasses import dataclass
 
@@ -19,138 +19,22 @@ class StatisticsAggregateAppStatsOptions(BaseOptions):
 
 
 class StatisticsAsync(ApiBase):
-    async def aggregate_app_stats(
-        self,
-        app_usage_stats_in: AppUsageStatsIn,
-        options: StatisticsAggregateAppStatsOptions = StatisticsAggregateAppStatsOptions(),
-    ) -> AppUsageStatsOut:
-        """Creates a background task to calculate the number of message attempts (`messageDestinations`) made for all applications in the environment.
-
-        Note that this endpoint is asynchronous. You will need to poll the `Get Background Task` endpoint to
-        retrieve the results of the operation.
-
-        The completed background task will return a payload like the following:
-        ```json
-        {
-          "id": "qtask_33qe39Stble9Rn3ZxFrqL5ZSsjT",
-          "status": "finished",
-          "task": "application.stats",
-          "data": {
-            "appStats": [
-              {
-                "messageDestinations": 2,
-                "appId": "app_33W1An2Zz5cO9SWbhHsYyDmVC6m",
-                "appUid": null
-              }
-            ]
-          }
-        }
-        ```"""
+    async def get_account_stats(self) -> dict:
+        """Get account statistics."""
         response = await self._request_asyncio(
-            method="post",
-            path="/api/v1/stats/usage/app",
+            method="get",
+            path="/v1/stats",
             path_params={},
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=app_usage_stats_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
         )
-        return AppUsageStatsOut.model_validate(response.json())
-
-    async def aggregate_event_types(self) -> AggregateEventTypesOut:
-        """Creates a background task to calculate the listed event types for all apps in the organization.
-
-        Note that this endpoint is asynchronous. You will need to poll the `Get Background Task` endpoint to
-        retrieve the results of the operation.
-
-        The completed background task will return a payload like the following:
-        ```json
-        {
-          "id": "qtask_33qe39Stble9Rn3ZxFrqL5ZSsjT",
-          "status": "finished",
-          "task": "event-type.aggregate",
-          "data": {
-            "event_types": [
-              {
-                "appId": "app_33W1An2Zz5cO9SWbhHsYyDmVC6m",
-                "explicitlySubscribedEventTypes": ["user.signup", "user.deleted"],
-                "hasCatchAllEndpoint": false
-              }
-            ]
-          }
-        }
-        ```"""
-        response = await self._request_asyncio(
-            method="put", path="/api/v1/stats/usage/event-types", path_params={}
-        )
-        return AggregateEventTypesOut.model_validate(response.json())
+        return response.json()
 
 
 class Statistics(ApiBase):
-    def aggregate_app_stats(
-        self,
-        app_usage_stats_in: AppUsageStatsIn,
-        options: StatisticsAggregateAppStatsOptions = StatisticsAggregateAppStatsOptions(),
-    ) -> AppUsageStatsOut:
-        """Creates a background task to calculate the number of message attempts (`messageDestinations`) made for all applications in the environment.
-
-        Note that this endpoint is asynchronous. You will need to poll the `Get Background Task` endpoint to
-        retrieve the results of the operation.
-
-        The completed background task will return a payload like the following:
-        ```json
-        {
-          "id": "qtask_33qe39Stble9Rn3ZxFrqL5ZSsjT",
-          "status": "finished",
-          "task": "application.stats",
-          "data": {
-            "appStats": [
-              {
-                "messageDestinations": 2,
-                "appId": "app_33W1An2Zz5cO9SWbhHsYyDmVC6m",
-                "appUid": null
-              }
-            ]
-          }
-        }
-        ```"""
+    def get_account_stats(self) -> dict:
+        """Get account statistics."""
         response = self._request_sync(
-            method="post",
-            path="/api/v1/stats/usage/app",
+            method="get",
+            path="/v1/stats",
             path_params={},
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=app_usage_stats_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
         )
-        return AppUsageStatsOut.model_validate(response.json())
-
-    def aggregate_event_types(self) -> AggregateEventTypesOut:
-        """Creates a background task to calculate the listed event types for all apps in the organization.
-
-        Note that this endpoint is asynchronous. You will need to poll the `Get Background Task` endpoint to
-        retrieve the results of the operation.
-
-        The completed background task will return a payload like the following:
-        ```json
-        {
-          "id": "qtask_33qe39Stble9Rn3ZxFrqL5ZSsjT",
-          "status": "finished",
-          "task": "event-type.aggregate",
-          "data": {
-            "event_types": [
-              {
-                "appId": "app_33W1An2Zz5cO9SWbhHsYyDmVC6m",
-                "explicitlySubscribedEventTypes": ["user.signup", "user.deleted"],
-                "hasCatchAllEndpoint": false
-              }
-            ]
-          }
-        }
-        ```"""
-        response = self._request_sync(
-            method="put", path="/api/v1/stats/usage/event-types", path_params={}
-        )
-        return AggregateEventTypesOut.model_validate(response.json())
+        return response.json()

@@ -23,7 +23,7 @@ class MessagePollerAsync(ApiBase):
             params["event_type"] = event_type
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/message-poller/poll",
+            path="/v1/message-poller/poll",
             path_params={},
             query_params=params,
         )
@@ -41,7 +41,7 @@ class MessagePollerAsync(ApiBase):
             body["endpoint_id"] = endpoint_id
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/message-poller/seek",
+            path="/v1/message-poller/seek",
             path_params={},
             json_body=body,
         )
@@ -59,7 +59,7 @@ class MessagePollerAsync(ApiBase):
             body["endpoint_id"] = endpoint_id
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/message-poller/commit",
+            path="/v1/message-poller/commit",
             path_params={},
             json_body=body,
         )
@@ -85,7 +85,7 @@ class MessagePoller(ApiBase):
             params["event_type"] = event_type
         response = self._request_sync(
             method="get",
-            path="/api/v1/message-poller/poll",
+            path="/v1/message-poller/poll",
             path_params={},
             query_params=params,
         )
@@ -103,7 +103,7 @@ class MessagePoller(ApiBase):
             body["endpoint_id"] = endpoint_id
         response = self._request_sync(
             method="post",
-            path="/api/v1/message-poller/seek",
+            path="/v1/message-poller/seek",
             path_params={},
             json_body=body,
         )
@@ -121,7 +121,7 @@ class MessagePoller(ApiBase):
             body["endpoint_id"] = endpoint_id
         response = self._request_sync(
             method="post",
-            path="/api/v1/message-poller/commit",
+            path="/v1/message-poller/commit",
             path_params={},
             json_body=body,
         )

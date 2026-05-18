@@ -10,7 +10,7 @@ class BackgroundTaskAsync(ApiBase):
         """List all background tasks for the authenticated customer."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/background-tasks",
+            path="/v1/background-tasks",
             path_params={},
         )
         return [BackgroundTaskOut.model_validate(item) for item in response.json()]
@@ -19,7 +19,7 @@ class BackgroundTaskAsync(ApiBase):
         """Get a background task by ID."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/background-tasks/{task_id}",
+            path="/v1/background-tasks/{task_id}",
             path_params={"task_id": task_id},
         )
         return BackgroundTaskOut.model_validate(response.json())
@@ -28,7 +28,7 @@ class BackgroundTaskAsync(ApiBase):
         """Cancel a pending or running background task."""
         response = await self._request_asyncio(
             method="put",
-            path="/api/v1/background-tasks/{task_id}",
+            path="/v1/background-tasks/{task_id}",
             path_params={"task_id": task_id},
         )
         return BackgroundTaskOut.model_validate(response.json())
@@ -39,7 +39,7 @@ class BackgroundTask(ApiBase):
         """List all background tasks for the authenticated customer."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/background-tasks",
+            path="/v1/background-tasks",
             path_params={},
         )
         return [BackgroundTaskOut.model_validate(item) for item in response.json()]
@@ -48,7 +48,7 @@ class BackgroundTask(ApiBase):
         """Get a background task by ID."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/background-tasks/{task_id}",
+            path="/v1/background-tasks/{task_id}",
             path_params={"task_id": task_id},
         )
         return BackgroundTaskOut.model_validate(response.json())
@@ -57,7 +57,7 @@ class BackgroundTask(ApiBase):
         """Cancel a pending or running background task."""
         response = self._request_sync(
             method="put",
-            path="/api/v1/background-tasks/{task_id}",
+            path="/v1/background-tasks/{task_id}",
             path_params={"task_id": task_id},
         )
         return BackgroundTaskOut.model_validate(response.json())

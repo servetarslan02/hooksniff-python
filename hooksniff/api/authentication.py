@@ -1,447 +1,320 @@
-# This file is @generated
+# Adapted for HookSniff API
+# HookSniff auth endpoints are at /v1/auth/...
 import typing as t
 from dataclasses import dataclass
 
-from deprecated import deprecated
-
-from ..models import (
-    ApiTokenOut,
-    ApplicationTokenExpireIn,
-    AppPortalAccessIn,
-    AppPortalAccessOut,
-    DashboardAccessOut,
-    RotatePollerTokenIn,
-    StreamPortalAccessIn,
-    StreamTokenExpireIn,
-)
 from .common import ApiBase, BaseOptions, serialize_params
 
 
-@dataclass
-class AuthenticationAppPortalAccessOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationExpireAllOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationLogoutOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationStreamLogoutOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationStreamPortalAccessOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationStreamExpireAllOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationRotateStreamPollerTokenOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
-@dataclass
-class AuthenticationDashboardAccessOptions(BaseOptions):
-    idempotency_key: t.Optional[str] = None
-
-    def _header_params(self) -> t.Dict[str, str]:
-        return serialize_params(
-            {
-                "idempotency-key": self.idempotency_key,
-            }
-        )
-
-
 class AuthenticationAsync(ApiBase):
-    async def app_portal_access(
-        self,
-        app_id: str,
-        app_portal_access_in: AppPortalAccessIn,
-        options: AuthenticationAppPortalAccessOptions = AuthenticationAppPortalAccessOptions(),
-    ) -> AppPortalAccessOut:
-        """Use this function to get magic links (and authentication codes) for connecting your users to the Consumer Application Portal."""
+    async def login(self, email: str, password: str) -> dict:
+        """Login with email and password. Returns JWT token."""
+        import json
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/auth/app-portal-access/{app_id}",
-            path_params={
-                "app_id": app_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=app_portal_access_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
+            path="/v1/auth/login",
+            json_body=json.dumps({"email": email, "password": password}),
         )
-        return AppPortalAccessOut.model_validate(response.json())
+        return response.json()
 
-    async def expire_all(
-        self,
-        app_id: str,
-        application_token_expire_in: ApplicationTokenExpireIn,
-        options: AuthenticationExpireAllOptions = AuthenticationExpireAllOptions(),
-    ) -> None:
-        """Expire all of the tokens associated with a specific application."""
-        await self._request_asyncio(
-            method="post",
-            path="/api/v1/auth/app/{app_id}/expire-all",
-            path_params={
-                "app_id": app_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=application_token_expire_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
-        )
-
-    @deprecated
-    async def dashboard_access(
-        self,
-        app_id: str,
-        options: AuthenticationDashboardAccessOptions = AuthenticationDashboardAccessOptions(),
-    ) -> DashboardAccessOut:
-        """Deprecated: Please use `app_portal_access` instead."""
+    async def register(self, email: str, password: str, name: t.Optional[str] = None) -> dict:
+        """Register a new account."""
+        import json
+        body: dict = {"email": email, "password": password}
+        if name:
+            body["name"] = name
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/auth/dashboard-access/{app_id}",
-            path_params={
-                "app_id": app_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
+            path="/v1/auth/register",
+            json_body=json.dumps(body),
         )
-        return DashboardAccessOut.model_validate(response.json())
+        return response.json()
 
-    async def logout(
-        self, options: AuthenticationLogoutOptions = AuthenticationLogoutOptions()
-    ) -> None:
-        """Logout an app token.
-
-        Trying to log out other tokens will fail."""
+    async def logout(self, refresh_token: t.Optional[str] = None) -> None:
+        """Logout (invalidate refresh token)."""
+        import json
+        body = {}
+        if refresh_token:
+            body["refresh_token"] = refresh_token
         await self._request_asyncio(
             method="post",
-            path="/api/v1/auth/logout",
-            path_params={},
-            query_params=options._query_params(),
-            header_params=options._header_params(),
+            path="/v1/auth/logout",
+            json_body=json.dumps(body) if body else None,
         )
 
-    async def stream_logout(
-        self,
-        options: AuthenticationStreamLogoutOptions = AuthenticationStreamLogoutOptions(),
-    ) -> None:
-        """Logout a stream token.
-
-        Trying to log out other tokens will fail."""
-        await self._request_asyncio(
-            method="post",
-            path="/api/v1/auth/stream-logout",
-            path_params={},
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-        )
-
-    async def stream_portal_access(
-        self,
-        stream_id: str,
-        stream_portal_access_in: StreamPortalAccessIn,
-        options: AuthenticationStreamPortalAccessOptions = AuthenticationStreamPortalAccessOptions(),
-    ) -> AppPortalAccessOut:
-        """Use this function to get magic links (and authentication codes) for connecting your users to the Stream Consumer Portal."""
-        response = await self._request_asyncio(
-            method="post",
-            path="/api/v1/auth/stream-portal-access/{stream_id}",
-            path_params={
-                "stream_id": stream_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=stream_portal_access_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
-        )
-        return AppPortalAccessOut.model_validate(response.json())
-
-    async def stream_expire_all(
-        self,
-        stream_id: str,
-        stream_token_expire_in: StreamTokenExpireIn,
-        options: AuthenticationStreamExpireAllOptions = AuthenticationStreamExpireAllOptions(),
-    ) -> None:
-        """Expire all of the tokens associated with a specific stream."""
-        await self._request_asyncio(
-            method="post",
-            path="/api/v1/auth/stream/{stream_id}/expire-all",
-            path_params={
-                "stream_id": stream_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=stream_token_expire_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
-        )
-
-    async def get_stream_poller_token(
-        self, stream_id: str, sink_id: str
-    ) -> ApiTokenOut:
-        """Get the current auth token for the stream poller."""
+    async def get_me(self) -> dict:
+        """Get current user profile."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/auth/stream/{stream_id}/sink/{sink_id}/poller/token",
-            path_params={
-                "stream_id": stream_id,
-                "sink_id": sink_id,
-            },
+            path="/v1/auth/me",
         )
-        return ApiTokenOut.model_validate(response.json())
+        return response.json()
 
-    async def rotate_stream_poller_token(
-        self,
-        stream_id: str,
-        sink_id: str,
-        rotate_poller_token_in: RotatePollerTokenIn,
-        options: AuthenticationRotateStreamPollerTokenOptions = AuthenticationRotateStreamPollerTokenOptions(),
-    ) -> ApiTokenOut:
-        """Create a new auth token for the stream poller API."""
+    async def update_profile(self, name: str, email: str) -> dict:
+        """Update profile."""
+        import json
+        response = await self._request_asyncio(
+            method="put",
+            path="/v1/auth/profile",
+            json_body=json.dumps({"name": name, "email": email}),
+        )
+        return response.json()
+
+    async def change_password(self, current_password: str, new_password: str) -> None:
+        """Change password."""
+        import json
+        await self._request_asyncio(
+            method="put",
+            path="/v1/auth/password",
+            json_body=json.dumps({
+                "current_password": current_password,
+                "new_password": new_password,
+            }),
+        )
+
+    async def forgot_password(self, email: str) -> None:
+        """Request password reset email."""
+        import json
+        await self._request_asyncio(
+            method="post",
+            path="/v1/auth/forgot-password",
+            json_body=json.dumps({"email": email}),
+        )
+
+    async def reset_password(self, token: str, new_password: str) -> None:
+        """Reset password with token."""
+        import json
+        await self._request_asyncio(
+            method="post",
+            path="/v1/auth/reset-password",
+            json_body=json.dumps({"token": token, "new_password": new_password}),
+        )
+
+    async def verify_email(self, token: str) -> None:
+        """Verify email address."""
+        import json
+        await self._request_asyncio(
+            method="post",
+            path="/v1/auth/verify-email",
+            json_body=json.dumps({"token": token}),
+        )
+
+    async def refresh(self, refresh_token: str) -> dict:
+        """Refresh access token."""
+        import json
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/auth/stream/{stream_id}/sink/{sink_id}/poller/token/rotate",
-            path_params={
-                "stream_id": stream_id,
-                "sink_id": sink_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=rotate_poller_token_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
+            path="/v1/auth/refresh",
+            json_body=json.dumps({"refresh_token": refresh_token}),
         )
-        return ApiTokenOut.model_validate(response.json())
+        return response.json()
+
+    async def enable_2fa(self, password: str) -> dict:
+        """Enable 2FA (returns TOTP secret and QR URL)."""
+        import json
+        response = await self._request_asyncio(
+            method="post",
+            path="/v1/auth/2fa/enable",
+            json_body=json.dumps({"password": password}),
+        )
+        return response.json()
+
+    async def confirm_2fa(self, code: str) -> None:
+        """Confirm 2FA setup with a code."""
+        import json
+        await self._request_asyncio(
+            method="post",
+            path="/v1/auth/2fa/confirm",
+            json_body=json.dumps({"code": code}),
+        )
+
+    async def verify_2fa(self, temp_token: str, code: str) -> dict:
+        """Verify 2FA code during login."""
+        import json
+        response = await self._request_asyncio(
+            method="post",
+            path="/v1/auth/2fa/verify",
+            json_body=json.dumps({"temp_token": temp_token, "code": code}),
+        )
+        return response.json()
+
+    async def disable_2fa(self, password: str) -> None:
+        """Disable 2FA."""
+        import json
+        await self._request_asyncio(
+            method="post",
+            path="/v1/auth/2fa/disable",
+            json_body=json.dumps({"password": password}),
+        )
+
+    async def export_data(self) -> dict:
+        """Export user data (GDPR)."""
+        response = await self._request_asyncio(
+            method="get",
+            path="/v1/auth/export",
+        )
+        return response.json()
+
+    async def delete_account(self) -> None:
+        """Delete account (GDPR)."""
+        await self._request_asyncio(
+            method="delete",
+            path="/v1/auth/account",
+        )
 
 
 class Authentication(ApiBase):
-    def app_portal_access(
-        self,
-        app_id: str,
-        app_portal_access_in: AppPortalAccessIn,
-        options: AuthenticationAppPortalAccessOptions = AuthenticationAppPortalAccessOptions(),
-    ) -> AppPortalAccessOut:
-        """Use this function to get magic links (and authentication codes) for connecting your users to the Consumer Application Portal."""
+    def login(self, email: str, password: str) -> dict:
+        """Login with email and password. Returns JWT token."""
+        import json
         response = self._request_sync(
             method="post",
-            path="/api/v1/auth/app-portal-access/{app_id}",
-            path_params={
-                "app_id": app_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=app_portal_access_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
+            path="/v1/auth/login",
+            json_body=json.dumps({"email": email, "password": password}),
         )
-        return AppPortalAccessOut.model_validate(response.json())
+        return response.json()
 
-    def expire_all(
-        self,
-        app_id: str,
-        application_token_expire_in: ApplicationTokenExpireIn,
-        options: AuthenticationExpireAllOptions = AuthenticationExpireAllOptions(),
-    ) -> None:
-        """Expire all of the tokens associated with a specific application."""
-        self._request_sync(
-            method="post",
-            path="/api/v1/auth/app/{app_id}/expire-all",
-            path_params={
-                "app_id": app_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=application_token_expire_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
-        )
-
-    @deprecated
-    def dashboard_access(
-        self,
-        app_id: str,
-        options: AuthenticationDashboardAccessOptions = AuthenticationDashboardAccessOptions(),
-    ) -> DashboardAccessOut:
-        """Deprecated: Please use `app_portal_access` instead."""
+    def register(self, email: str, password: str, name: t.Optional[str] = None) -> dict:
+        """Register a new account."""
+        import json
+        body: dict = {"email": email, "password": password}
+        if name:
+            body["name"] = name
         response = self._request_sync(
             method="post",
-            path="/api/v1/auth/dashboard-access/{app_id}",
-            path_params={
-                "app_id": app_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
+            path="/v1/auth/register",
+            json_body=json.dumps(body),
         )
-        return DashboardAccessOut.model_validate(response.json())
+        return response.json()
 
-    def logout(
-        self, options: AuthenticationLogoutOptions = AuthenticationLogoutOptions()
-    ) -> None:
-        """Logout an app token.
-
-        Trying to log out other tokens will fail."""
+    def logout(self, refresh_token: t.Optional[str] = None) -> None:
+        """Logout (invalidate refresh token)."""
+        import json
+        body = {}
+        if refresh_token:
+            body["refresh_token"] = refresh_token
         self._request_sync(
             method="post",
-            path="/api/v1/auth/logout",
-            path_params={},
-            query_params=options._query_params(),
-            header_params=options._header_params(),
+            path="/v1/auth/logout",
+            json_body=json.dumps(body) if body else None,
         )
 
-    def stream_logout(
-        self,
-        options: AuthenticationStreamLogoutOptions = AuthenticationStreamLogoutOptions(),
-    ) -> None:
-        """Logout a stream token.
-
-        Trying to log out other tokens will fail."""
-        self._request_sync(
-            method="post",
-            path="/api/v1/auth/stream-logout",
-            path_params={},
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-        )
-
-    def stream_portal_access(
-        self,
-        stream_id: str,
-        stream_portal_access_in: StreamPortalAccessIn,
-        options: AuthenticationStreamPortalAccessOptions = AuthenticationStreamPortalAccessOptions(),
-    ) -> AppPortalAccessOut:
-        """Use this function to get magic links (and authentication codes) for connecting your users to the Stream Consumer Portal."""
-        response = self._request_sync(
-            method="post",
-            path="/api/v1/auth/stream-portal-access/{stream_id}",
-            path_params={
-                "stream_id": stream_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=stream_portal_access_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
-        )
-        return AppPortalAccessOut.model_validate(response.json())
-
-    def stream_expire_all(
-        self,
-        stream_id: str,
-        stream_token_expire_in: StreamTokenExpireIn,
-        options: AuthenticationStreamExpireAllOptions = AuthenticationStreamExpireAllOptions(),
-    ) -> None:
-        """Expire all of the tokens associated with a specific stream."""
-        self._request_sync(
-            method="post",
-            path="/api/v1/auth/stream/{stream_id}/expire-all",
-            path_params={
-                "stream_id": stream_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=stream_token_expire_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
-        )
-
-    def get_stream_poller_token(self, stream_id: str, sink_id: str) -> ApiTokenOut:
-        """Get the current auth token for the stream poller."""
+    def get_me(self) -> dict:
+        """Get current user profile."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/auth/stream/{stream_id}/sink/{sink_id}/poller/token",
-            path_params={
-                "stream_id": stream_id,
-                "sink_id": sink_id,
-            },
+            path="/v1/auth/me",
         )
-        return ApiTokenOut.model_validate(response.json())
+        return response.json()
 
-    def rotate_stream_poller_token(
-        self,
-        stream_id: str,
-        sink_id: str,
-        rotate_poller_token_in: RotatePollerTokenIn,
-        options: AuthenticationRotateStreamPollerTokenOptions = AuthenticationRotateStreamPollerTokenOptions(),
-    ) -> ApiTokenOut:
-        """Create a new auth token for the stream poller API."""
+    def update_profile(self, name: str, email: str) -> dict:
+        """Update profile."""
+        import json
+        response = self._request_sync(
+            method="put",
+            path="/v1/auth/profile",
+            json_body=json.dumps({"name": name, "email": email}),
+        )
+        return response.json()
+
+    def change_password(self, current_password: str, new_password: str) -> None:
+        """Change password."""
+        import json
+        self._request_sync(
+            method="put",
+            path="/v1/auth/password",
+            json_body=json.dumps({
+                "current_password": current_password,
+                "new_password": new_password,
+            }),
+        )
+
+    def forgot_password(self, email: str) -> None:
+        """Request password reset email."""
+        import json
+        self._request_sync(
+            method="post",
+            path="/v1/auth/forgot-password",
+            json_body=json.dumps({"email": email}),
+        )
+
+    def reset_password(self, token: str, new_password: str) -> None:
+        """Reset password with token."""
+        import json
+        self._request_sync(
+            method="post",
+            path="/v1/auth/reset-password",
+            json_body=json.dumps({"token": token, "new_password": new_password}),
+        )
+
+    def verify_email(self, token: str) -> None:
+        """Verify email address."""
+        import json
+        self._request_sync(
+            method="post",
+            path="/v1/auth/verify-email",
+            json_body=json.dumps({"token": token}),
+        )
+
+    def refresh(self, refresh_token: str) -> dict:
+        """Refresh access token."""
+        import json
         response = self._request_sync(
             method="post",
-            path="/api/v1/auth/stream/{stream_id}/sink/{sink_id}/poller/token/rotate",
-            path_params={
-                "stream_id": stream_id,
-                "sink_id": sink_id,
-            },
-            query_params=options._query_params(),
-            header_params=options._header_params(),
-            json_body=rotate_poller_token_in.model_dump_json(
-                exclude_unset=True, by_alias=True
-            ),
+            path="/v1/auth/refresh",
+            json_body=json.dumps({"refresh_token": refresh_token}),
         )
-        return ApiTokenOut.model_validate(response.json())
+        return response.json()
+
+    def enable_2fa(self, password: str) -> dict:
+        """Enable 2FA (returns TOTP secret and QR URL)."""
+        import json
+        response = self._request_sync(
+            method="post",
+            path="/v1/auth/2fa/enable",
+            json_body=json.dumps({"password": password}),
+        )
+        return response.json()
+
+    def confirm_2fa(self, code: str) -> None:
+        """Confirm 2FA setup with a code."""
+        import json
+        self._request_sync(
+            method="post",
+            path="/v1/auth/2fa/confirm",
+            json_body=json.dumps({"code": code}),
+        )
+
+    def verify_2fa(self, temp_token: str, code: str) -> dict:
+        """Verify 2FA code during login."""
+        import json
+        response = self._request_sync(
+            method="post",
+            path="/v1/auth/2fa/verify",
+            json_body=json.dumps({"temp_token": temp_token, "code": code}),
+        )
+        return response.json()
+
+    def disable_2fa(self, password: str) -> None:
+        """Disable 2FA."""
+        import json
+        self._request_sync(
+            method="post",
+            path="/v1/auth/2fa/disable",
+            json_body=json.dumps({"password": password}),
+        )
+
+    def export_data(self) -> dict:
+        """Export user data (GDPR)."""
+        response = self._request_sync(
+            method="get",
+            path="/v1/auth/export",
+        )
+        return response.json()
+
+    def delete_account(self) -> None:
+        """Delete account (GDPR)."""
+        self._request_sync(
+            method="delete",
+            path="/v1/auth/account",
+        )

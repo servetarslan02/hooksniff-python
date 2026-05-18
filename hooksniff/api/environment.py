@@ -17,7 +17,7 @@ class EnvironmentAsync(ApiBase):
         """List all environments for the authenticated customer."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/environments",
+            path="/v1/environments",
             path_params={},
         )
         return [EnvironmentOut.model_validate(item) for item in response.json()]
@@ -26,7 +26,7 @@ class EnvironmentAsync(ApiBase):
         """Create a new environment."""
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/environments",
+            path="/v1/environments",
             path_params={},
             json_body=environment_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -36,7 +36,7 @@ class EnvironmentAsync(ApiBase):
         """Get an environment by ID."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/environments/{environment_id}",
+            path="/v1/environments/{environment_id}",
             path_params={"environment_id": environment_id},
         )
         return EnvironmentOut.model_validate(response.json())
@@ -47,7 +47,7 @@ class EnvironmentAsync(ApiBase):
         """Update an environment."""
         response = await self._request_asyncio(
             method="put",
-            path="/api/v1/environments/{environment_id}",
+            path="/v1/environments/{environment_id}",
             path_params={"environment_id": environment_id},
             json_body=environment_patch.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -57,7 +57,7 @@ class EnvironmentAsync(ApiBase):
         """Delete an environment."""
         await self._request_asyncio(
             method="delete",
-            path="/api/v1/environments/{environment_id}",
+            path="/v1/environments/{environment_id}",
             path_params={"environment_id": environment_id},
         )
 
@@ -65,7 +65,7 @@ class EnvironmentAsync(ApiBase):
         """List all variables in an environment."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/environments/{environment_id}/variables",
+            path="/v1/environments/{environment_id}/variables",
             path_params={"environment_id": environment_id},
         )
         return [EnvironmentVariableOut.model_validate(item) for item in response.json()]
@@ -76,7 +76,7 @@ class EnvironmentAsync(ApiBase):
         """Get a single variable."""
         response = await self._request_asyncio(
             method="get",
-            path="/api/v1/environments/{environment_id}/variables/{var_id}",
+            path="/v1/environments/{environment_id}/variables/{var_id}",
             path_params={"environment_id": environment_id, "var_id": variable_id},
         )
         return EnvironmentVariableOut.model_validate(response.json())
@@ -87,7 +87,7 @@ class EnvironmentAsync(ApiBase):
         """Create a variable in an environment."""
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/environments/{environment_id}/variables",
+            path="/v1/environments/{environment_id}/variables",
             path_params={"environment_id": environment_id},
             json_body=variable_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -99,7 +99,7 @@ class EnvironmentAsync(ApiBase):
         """Update a variable."""
         response = await self._request_asyncio(
             method="put",
-            path="/api/v1/environments/{environment_id}/variables/{var_id}",
+            path="/v1/environments/{environment_id}/variables/{var_id}",
             path_params={"environment_id": environment_id, "var_id": variable_id},
             json_body=variable_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -109,7 +109,7 @@ class EnvironmentAsync(ApiBase):
         """Delete a variable."""
         await self._request_asyncio(
             method="delete",
-            path="/api/v1/environments/{environment_id}/variables/{var_id}",
+            path="/v1/environments/{environment_id}/variables/{var_id}",
             path_params={"environment_id": environment_id, "var_id": variable_id},
         )
 
@@ -119,7 +119,7 @@ class EnvironmentAsync(ApiBase):
         """Bulk upsert variables (create or update multiple at once)."""
         response = await self._request_asyncio(
             method="post",
-            path="/api/v1/environments/{environment_id}/variables/bulk",
+            path="/v1/environments/{environment_id}/variables/bulk",
             path_params={"environment_id": environment_id},
             json_body=bulk_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -131,7 +131,7 @@ class Environment(ApiBase):
         """List all environments for the authenticated customer."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/environments",
+            path="/v1/environments",
             path_params={},
         )
         return [EnvironmentOut.model_validate(item) for item in response.json()]
@@ -140,7 +140,7 @@ class Environment(ApiBase):
         """Create a new environment."""
         response = self._request_sync(
             method="post",
-            path="/api/v1/environments",
+            path="/v1/environments",
             path_params={},
             json_body=environment_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -150,7 +150,7 @@ class Environment(ApiBase):
         """Get an environment by ID."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/environments/{environment_id}",
+            path="/v1/environments/{environment_id}",
             path_params={"environment_id": environment_id},
         )
         return EnvironmentOut.model_validate(response.json())
@@ -161,7 +161,7 @@ class Environment(ApiBase):
         """Update an environment."""
         response = self._request_sync(
             method="put",
-            path="/api/v1/environments/{environment_id}",
+            path="/v1/environments/{environment_id}",
             path_params={"environment_id": environment_id},
             json_body=environment_patch.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -171,7 +171,7 @@ class Environment(ApiBase):
         """Delete an environment."""
         self._request_sync(
             method="delete",
-            path="/api/v1/environments/{environment_id}",
+            path="/v1/environments/{environment_id}",
             path_params={"environment_id": environment_id},
         )
 
@@ -179,7 +179,7 @@ class Environment(ApiBase):
         """List all variables in an environment."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/environments/{environment_id}/variables",
+            path="/v1/environments/{environment_id}/variables",
             path_params={"environment_id": environment_id},
         )
         return [EnvironmentVariableOut.model_validate(item) for item in response.json()]
@@ -190,7 +190,7 @@ class Environment(ApiBase):
         """Get a single variable."""
         response = self._request_sync(
             method="get",
-            path="/api/v1/environments/{environment_id}/variables/{var_id}",
+            path="/v1/environments/{environment_id}/variables/{var_id}",
             path_params={"environment_id": environment_id, "var_id": variable_id},
         )
         return EnvironmentVariableOut.model_validate(response.json())
@@ -201,7 +201,7 @@ class Environment(ApiBase):
         """Create a variable in an environment."""
         response = self._request_sync(
             method="post",
-            path="/api/v1/environments/{environment_id}/variables",
+            path="/v1/environments/{environment_id}/variables",
             path_params={"environment_id": environment_id},
             json_body=variable_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -213,7 +213,7 @@ class Environment(ApiBase):
         """Update a variable."""
         response = self._request_sync(
             method="put",
-            path="/api/v1/environments/{environment_id}/variables/{var_id}",
+            path="/v1/environments/{environment_id}/variables/{var_id}",
             path_params={"environment_id": environment_id, "var_id": variable_id},
             json_body=variable_in.model_dump_json(exclude_unset=True, by_alias=True),
         )
@@ -223,7 +223,7 @@ class Environment(ApiBase):
         """Delete a variable."""
         self._request_sync(
             method="delete",
-            path="/api/v1/environments/{environment_id}/variables/{var_id}",
+            path="/v1/environments/{environment_id}/variables/{var_id}",
             path_params={"environment_id": environment_id, "var_id": variable_id},
         )
 
@@ -233,7 +233,7 @@ class Environment(ApiBase):
         """Bulk upsert variables (create or update multiple at once)."""
         response = self._request_sync(
             method="post",
-            path="/api/v1/environments/{environment_id}/variables/bulk",
+            path="/v1/environments/{environment_id}/variables/bulk",
             path_params={"environment_id": environment_id},
             json_body=bulk_in.model_dump_json(exclude_unset=True, by_alias=True),
         )

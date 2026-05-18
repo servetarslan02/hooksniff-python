@@ -141,3 +141,20 @@ def create_error_from_status(
         return factory()
 
     return HookSniffError(status_code, detail or f"HTTP {status_code}", headers)
+
+
+# Aliases for backward compatibility with error module
+HttpError = HookSniffError
+
+
+class HTTPValidationError(HookSniffError):
+    """422 Validation Error — backward compatibility alias."""
+
+    def __init__(self, detail: list | None = None, status_code: int = 422, headers: dict | None = None):
+        super().__init__(status_code, "Validation error", headers)
+        self.validation_errors = detail or []
+
+    @classmethod
+    def init_exception(cls, body: dict, status_code: int = 422) -> "HTTPValidationError":
+        detail = body.get("detail", [])
+        return cls(detail=detail, status_code=status_code)

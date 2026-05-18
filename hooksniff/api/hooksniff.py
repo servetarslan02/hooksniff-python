@@ -1,4 +1,5 @@
 # Adapted from Svix SDK for HookSniff
+# HookSniff API paths: /v1/... (not /api/v1/app/{app_id}/... from Svix)
 
 import typing as t
 from dataclasses import dataclass, field
@@ -26,7 +27,7 @@ DEFAULT_SERVER_URL = "https://hooksniff-api-1046140057667.europe-west1.run.app"
 class HookSniffOptions:
     debug: bool = False
     server_url: t.Optional[str] = None
-    retry_schedule: t.List[float] = field(default_factory=lambda: [0.05, 0.1, 0.2])
+    retry_schedule: t.List[float] = field(default_factory=lambda: [0.5, 1.0, 2.0])
     timeout: float = 15.0
     proxy: t.Optional[str] = None
 
