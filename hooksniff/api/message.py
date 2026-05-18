@@ -16,6 +16,7 @@ from .pagination import ListResponse, build_list_response
 class MessageListOptions(BaseOptions):
     limit: t.Optional[int] = None
     page: t.Optional[int] = None
+    iterator: t.Optional[str] = None
     status: t.Optional[str] = None
     endpoint_id: t.Optional[str] = None
     event_type: t.Optional[str] = None
@@ -25,6 +26,7 @@ class MessageListOptions(BaseOptions):
             {
                 "limit": self.limit,
                 "page": self.page,
+                "iterator": self.iterator,
                 "status": self.status,
                 "endpoint_id": self.endpoint_id,
                 "event_type": self.event_type,

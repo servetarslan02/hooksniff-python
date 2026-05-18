@@ -3,17 +3,31 @@ import typing as t
 from .. import models
 from ..models import BackgroundTaskOut
 from .common import ApiBase
+from .pagination import ListResponse, build_list_response
 
 
 class BackgroundTaskAsync(ApiBase):
-    async def list(self) -> t.List[BackgroundTaskOut]:
-        """List all background tasks for the authenticated customer."""
+    async def list(self) -> ListResponse[BackgroundTaskOut]:
+        """List all background tasks with pagination support."""
         response = await self._request_asyncio(
-            method="get",
-            path="/v1/background-tasks",
-            path_params={},
+            method="get", path="/v1/background-tasks", path_params={},
         )
-        return [BackgroundTaskOut.model_validate(item) for item in response.json()]
+
+        def _fetch_sync(iterator: str) -> ListResponse[BackgroundTaskOut]:
+            resp = self._request_sync(
+                method="get", path="/v1/background-tasks",
+                query_params={"iterator": iterator},
+            )
+            return build_list_response(resp.json(), BackgroundTaskOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        async def _fetch_async(iterator: str) -> ListResponse[BackgroundTaskOut]:
+            resp = await self._request_asyncio(
+                method="get", path="/v1/background-tasks",
+                query_params={"iterator": iterator},
+            )
+            return build_list_response(resp.json(), BackgroundTaskOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        return build_list_response(response.json(), BackgroundTaskOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
 
     async def get(self, task_id: str) -> BackgroundTaskOut:
         """Get a background task by ID."""
@@ -35,14 +49,20 @@ class BackgroundTaskAsync(ApiBase):
 
 
 class BackgroundTask(ApiBase):
-    def list(self) -> t.List[BackgroundTaskOut]:
-        """List all background tasks for the authenticated customer."""
+    def list(self) -> ListResponse[BackgroundTaskOut]:
+        """List all background tasks with pagination support."""
         response = self._request_sync(
-            method="get",
-            path="/v1/background-tasks",
-            path_params={},
+            method="get", path="/v1/background-tasks", path_params={},
         )
-        return [BackgroundTaskOut.model_validate(item) for item in response.json()]
+
+        def _fetch_sync(iterator: str) -> ListResponse[BackgroundTaskOut]:
+            resp = self._request_sync(
+                method="get", path="/v1/background-tasks",
+                query_params={"iterator": iterator},
+            )
+            return build_list_response(resp.json(), BackgroundTaskOut, fetch_fn=_fetch_sync)
+
+        return build_list_response(response.json(), BackgroundTaskOut, fetch_fn=_fetch_sync)
 
     def get(self, task_id: str) -> BackgroundTaskOut:
         """Get a background task by ID."""

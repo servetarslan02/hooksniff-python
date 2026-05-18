@@ -10,17 +10,31 @@ from ..models import (
     EnvironmentVariableBulkUpsertIn,
 )
 from .common import ApiBase
+from .pagination import ListResponse, build_list_response
 
 
 class EnvironmentAsync(ApiBase):
-    async def list(self) -> t.List[EnvironmentOut]:
-        """List all environments for the authenticated customer."""
+    async def list(self) -> ListResponse[EnvironmentOut]:
+        """List all environments with pagination support."""
         response = await self._request_asyncio(
-            method="get",
-            path="/v1/environments",
-            path_params={},
+            method="get", path="/v1/environments", path_params={},
         )
-        return [EnvironmentOut.model_validate(item) for item in response.json()]
+
+        def _fetch_sync(iterator: str) -> ListResponse[EnvironmentOut]:
+            resp = self._request_sync(
+                method="get", path="/v1/environments",
+                query_params={"iterator": iterator},
+            )
+            return build_list_response(resp.json(), EnvironmentOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        async def _fetch_async(iterator: str) -> ListResponse[EnvironmentOut]:
+            resp = await self._request_asyncio(
+                method="get", path="/v1/environments",
+                query_params={"iterator": iterator},
+            )
+            return build_list_response(resp.json(), EnvironmentOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        return build_list_response(response.json(), EnvironmentOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
 
     async def create(self, environment_in: EnvironmentIn) -> EnvironmentOut:
         """Create a new environment."""
@@ -127,14 +141,20 @@ class EnvironmentAsync(ApiBase):
 
 
 class Environment(ApiBase):
-    def list(self) -> t.List[EnvironmentOut]:
-        """List all environments for the authenticated customer."""
+    def list(self) -> ListResponse[EnvironmentOut]:
+        """List all environments with pagination support."""
         response = self._request_sync(
-            method="get",
-            path="/v1/environments",
-            path_params={},
+            method="get", path="/v1/environments", path_params={},
         )
-        return [EnvironmentOut.model_validate(item) for item in response.json()]
+
+        def _fetch_sync(iterator: str) -> ListResponse[EnvironmentOut]:
+            resp = self._request_sync(
+                method="get", path="/v1/environments",
+                query_params={"iterator": iterator},
+            )
+            return build_list_response(resp.json(), EnvironmentOut, fetch_fn=_fetch_sync)
+
+        return build_list_response(response.json(), EnvironmentOut, fetch_fn=_fetch_sync)
 
     def create(self, environment_in: EnvironmentIn) -> EnvironmentOut:
         """Create a new environment."""

@@ -12,6 +12,7 @@ from ..models import (
     EndpointUpdate,
 )
 from .common import ApiBase, BaseOptions, serialize_params
+from .pagination import ListResponse, build_list_response
 
 
 @dataclass
@@ -20,12 +21,15 @@ class EndpointListOptions(BaseOptions):
     """Limit the number of returned items"""
     page: t.Optional[int] = None
     """Page number for pagination"""
+    iterator: t.Optional[str] = None
+    """Cursor for pagination"""
 
     def _query_params(self) -> t.Dict[str, str]:
         return serialize_params(
             {
                 "limit": self.limit,
                 "page": self.page,
+                "iterator": self.iterator,
             }
         )
 
@@ -45,19 +49,32 @@ class EndpointCreateOptions(BaseOptions):
 class EndpointAsync(ApiBase):
     async def list(
         self, options: EndpointListOptions = EndpointListOptions()
-    ) -> t.List[EndpointOut]:
-        """List all endpoints for the authenticated user."""
+    ) -> ListResponse[EndpointOut]:
+        """List all endpoints with pagination support."""
         response = await self._request_asyncio(
             method="get",
             path="/v1/endpoints",
             query_params=options._query_params(),
             header_params=options._header_params(),
         )
-        data = response.json()
-        # HookSniff returns a plain array or {data: [...], total, has_more}
-        if isinstance(data, list):
-            return [EndpointOut.model_validate(item) for item in data]
-        return [EndpointOut.model_validate(item) for item in data.get("data", data)]
+
+        def _fetch_sync(iterator: str) -> ListResponse[EndpointOut]:
+            opts = EndpointListOptions(limit=options.limit, iterator=iterator)
+            resp = self._request_sync(
+                method="get", path="/v1/endpoints",
+                query_params=opts._query_params(), header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), EndpointOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        async def _fetch_async(iterator: str) -> ListResponse[EndpointOut]:
+            opts = EndpointListOptions(limit=options.limit, iterator=iterator)
+            resp = await self._request_asyncio(
+                method="get", path="/v1/endpoints",
+                query_params=opts._query_params(), header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), EndpointOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        return build_list_response(response.json(), EndpointOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
 
     async def create(
         self,
@@ -146,18 +163,24 @@ class EndpointAsync(ApiBase):
 class Endpoint(ApiBase):
     def list(
         self, options: EndpointListOptions = EndpointListOptions()
-    ) -> t.List[EndpointOut]:
-        """List all endpoints for the authenticated user."""
+    ) -> ListResponse[EndpointOut]:
+        """List all endpoints with pagination support."""
         response = self._request_sync(
             method="get",
             path="/v1/endpoints",
             query_params=options._query_params(),
             header_params=options._header_params(),
         )
-        data = response.json()
-        if isinstance(data, list):
-            return [EndpointOut.model_validate(item) for item in data]
-        return [EndpointOut.model_validate(item) for item in data.get("data", data)]
+
+        def _fetch_sync(iterator: str) -> ListResponse[EndpointOut]:
+            opts = EndpointListOptions(limit=options.limit, iterator=iterator)
+            resp = self._request_sync(
+                method="get", path="/v1/endpoints",
+                query_params=opts._query_params(), header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), EndpointOut, fetch_fn=_fetch_sync)
+
+        return build_list_response(response.json(), EndpointOut, fetch_fn=_fetch_sync)
 
     def create(
         self,
