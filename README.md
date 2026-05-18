@@ -5,7 +5,7 @@
   <a href="https://github.com/servetarslan02/HookSniff"><img src="https://img.shields.io/github/license/servetarslan02/HookSniff" alt="License"></a>
 </p>
 
-Python SDK for the [HookSniff](https://hooksniff.com) webhook delivery platform.
+Python SDK for the [HookSniff](https://hooksniff.vercel.app) webhook delivery platform.
 
 ## Installation
 
@@ -75,7 +75,7 @@ except HookSniffError as err:
 ```python
 client = HookSniff(
     "hs_xxx",
-    base_url="https://api.hooksniff.com/v1",  # optional
+    base_url="https://hooksniff-api-1046140057667.europe-west1.run.app/v1",  # optional
     timeout=30,                                 # seconds
     retries=3,                                  # auto-retry on 429/5xx
 )
@@ -108,6 +108,6 @@ asyncio.run(main())
 
 ## Links
 
-- [Documentation](https://docs.hooksniff.com)
-- [API Reference](https://api.hooksniff.com)
+- [Documentation](https://hooksniff.vercel.app/docs)
+- [API Reference](https://hooksniff-api-1046140057667.europe-west1.run.app)
 - [GitHub](https://github.com/servetarslan02/HookSniff)

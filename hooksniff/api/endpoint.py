@@ -389,7 +389,7 @@ class EndpointAsync(ApiBase):
         """Get the endpoint's signing secret.
 
         This is used to verify the authenticity of the webhook.
-        For more information please refer to [the consuming webhooks docs](https://docs.hooksniff.com/consuming-webhooks/)."""
+        For more information please refer to [the consuming webhooks docs](https://hooksniff.vercel.app/docs)."""
         response = await self._request_asyncio(
             method="get",
             path="/api/v1/app/{app_id}/endpoint/{endpoint_id}/secret",
@@ -770,7 +770,7 @@ class Endpoint(ApiBase):
         """Get the endpoint's signing secret.
 
         This is used to verify the authenticity of the webhook.
-        For more information please refer to [the consuming webhooks docs](https://docs.hooksniff.com/consuming-webhooks/)."""
+        For more information please refer to [the consuming webhooks docs](https://hooksniff.vercel.app/docs)."""
         response = self._request_sync(
             method="get",
             path="/api/v1/app/{app_id}/endpoint/{endpoint_id}/secret",

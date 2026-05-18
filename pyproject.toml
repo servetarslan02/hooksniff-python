@@ -38,8 +38,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://hooksniff.com"
-Documentation = "https://docs.hooksniff.com"
+Homepage = "https://hooksniff.vercel.app"
+Documentation = "https://hooksniff.vercel.app/docs"
 Repository = "https://github.com/servetarslan02/HookSniff"
 Issues = "https://github.com/servetarslan02/HookSniff/issues"
 
