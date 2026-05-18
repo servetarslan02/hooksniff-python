@@ -1,4 +1,5 @@
 # Adapted for HookSniff API — matches UpdateEndpointRequest
+# Read-only fields (failure_streak, avg_response_ms) are NOT included
 from typing import Any, Dict, List, Optional
 
 from .common import BaseModel
