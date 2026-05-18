@@ -31,6 +31,7 @@ class HookSniffOptions:
     retry_schedule: t.List[float] = field(default_factory=lambda: [1.0, 2.0, 4.0])
     timeout: float = 15.0
     proxy: t.Optional[str] = None
+    headers: t.Optional[t.Dict[str, str]] = None
 
 
 class ClientBase:
@@ -53,6 +54,7 @@ class ClientBase:
             follow_redirects=False,
             raise_on_unexpected_status=True,
             proxy=options.proxy,
+            headers=options.headers,
         )
         self._client = client
 
