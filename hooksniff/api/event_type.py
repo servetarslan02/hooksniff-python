@@ -13,6 +13,7 @@ from ..models import (
     ListResponseEventTypeOut,
 )
 from .common import ApiBase, BaseOptions, serialize_params
+from .pagination import ListResponse, build_list_response
 
 
 @dataclass
@@ -80,16 +81,31 @@ class EventTypeDeleteOptions(BaseOptions):
 class EventTypeAsync(ApiBase):
     async def list(
         self, options: EventTypeListOptions = EventTypeListOptions()
-    ) -> ListResponseEventTypeOut:
-        """Return the list of event types."""
+    ) -> ListResponse[EventTypeOut]:
+        """Return the list of event types with pagination support."""
         response = await self._request_asyncio(
-            method="get",
-            path="/v1/events",
-            path_params={},
+            method="get", path="/v1/events", path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
         )
-        return ListResponseEventTypeOut.model_validate(response.json())
+
+        def _fetch_sync(iterator: str) -> ListResponse[EventTypeOut]:
+            opts = EventTypeListOptions(limit=options.limit, iterator=iterator)
+            resp = self._request_sync(
+                method="get", path="/v1/events", path_params={},
+                query_params=opts._query_params(), header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), EventTypeOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        async def _fetch_async(iterator: str) -> ListResponse[EventTypeOut]:
+            opts = EventTypeListOptions(limit=options.limit, iterator=iterator)
+            resp = await self._request_asyncio(
+                method="get", path="/v1/events", path_params={},
+                query_params=opts._query_params(), header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), EventTypeOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
+
+        return build_list_response(response.json(), EventTypeOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async)
 
     async def create(
         self,
@@ -201,16 +217,23 @@ class EventTypeAsync(ApiBase):
 class EventType(ApiBase):
     def list(
         self, options: EventTypeListOptions = EventTypeListOptions()
-    ) -> ListResponseEventTypeOut:
-        """Return the list of event types."""
+    ) -> ListResponse[EventTypeOut]:
+        """Return the list of event types with pagination support."""
         response = self._request_sync(
-            method="get",
-            path="/v1/events",
-            path_params={},
+            method="get", path="/v1/events", path_params={},
             query_params=options._query_params(),
             header_params=options._header_params(),
         )
-        return ListResponseEventTypeOut.model_validate(response.json())
+
+        def _fetch_sync(iterator: str) -> ListResponse[EventTypeOut]:
+            opts = EventTypeListOptions(limit=options.limit, iterator=iterator)
+            resp = self._request_sync(
+                method="get", path="/v1/events", path_params={},
+                query_params=opts._query_params(), header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), EventTypeOut, fetch_fn=_fetch_sync)
+
+        return build_list_response(response.json(), EventTypeOut, fetch_fn=_fetch_sync)
 
     def create(
         self,
