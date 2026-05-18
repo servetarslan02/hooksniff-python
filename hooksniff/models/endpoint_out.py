@@ -19,3 +19,4 @@ class EndpointOut(BaseModel):
     avg_response_ms: int = 0
     failure_streak: int = 0
     format: str = "standard"
+    application_id: Optional[str] = None
