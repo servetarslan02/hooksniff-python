@@ -71,13 +71,11 @@ if not TOKEN and not SERVER_URL:
     @pytest.fixture(scope="session")
     def httpserver_listen_address():
         # Use IP address in the docker bridge network as server hostname in order for
-        # the svix server executed in a docker container to successfully send webhooks
         # to the HTTP server executed on the host
         return ("172.17.0.1", 0)
 
     @pytest.fixture(scope="session")
     def hooksniff_server_url(docker_services):
-        # svix server container exposes a free port to the docker host,
         # we use the docker network gateway IP in case the tests are also
         # executed in a container
         hooksniff_server_port = docker_services.port_for("backend", 8071)
@@ -86,7 +84,6 @@ if not TOKEN and not SERVER_URL:
     @pytest.fixture(autouse=True, scope="session")
     def hooksniff_server(hooksniff_server_url):
         """Spawn a HookSniff server for the tests session using docker compose"""
-        # wait for the svix backend service to be up and responding
         request_session = requests.Session()
         retries = Retry(
             total=10, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504]
@@ -100,16 +97,12 @@ if not TOKEN and not SERVER_URL:
     def hooksniff_wiper(docker_compose):
         """Ensure stateless tests"""
         yield
-        # wipe svix database after each test to ensure stateless tests
         docker_compose.execute(
-            f"exec -T backend svix-server wipe --yes-i-know-what-im-doing {HOOKSNIFF_ORG_ID}"
         )
 
     @pytest.fixture(scope="session")
     def hooksniff_api(hooksniff_server_url, docker_compose):
-        # generate bearer token to authorize communication with the svix server
         exec_output = docker_compose.execute(
-            f"exec -T backend svix-server jwt generate {HOOKSNIFF_ORG_ID}"
         )
         hooksniff_auth_token = (
             exec_output.decode()

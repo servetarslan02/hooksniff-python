@@ -40,15 +40,15 @@ class PayloadForTesting:
         self.secret = defaultSecret
         self.signature = signature
         self.header = {
-            "svix-id": defaultMsgID,
-            "svix-signature": "v1," + signature,
-            "svix-timestamp": self.timestamp,
+            "hooksniff-id": defaultMsgID,
+            "hooksniff-signature": "v1," + signature,
+            "hooksniff-timestamp": self.timestamp,
         }
 
 
 def test_missing_id_raises_error():
     testPayload = PayloadForTesting()
-    del testPayload.header["svix-id"]
+    del testPayload.header["hooksniff-id"]
 
     wh = Webhook(testPayload.secret)
 
@@ -58,7 +58,7 @@ def test_missing_id_raises_error():
 
 def test_timestamp_raises_error():
     testPayload = PayloadForTesting()
-    del testPayload.header["svix-timestamp"]
+    del testPayload.header["hooksniff-timestamp"]
 
     wh = Webhook(testPayload.secret)
 
@@ -68,7 +68,7 @@ def test_timestamp_raises_error():
 
 def test_invalid_timestamp_raises_error():
     testPayload = PayloadForTesting()
-    testPayload.header["svix-timestamp"] = "hello"
+    testPayload.header["hooksniff-timestamp"] = "hello"
 
     wh = Webhook(testPayload.secret)
 
@@ -78,7 +78,7 @@ def test_invalid_timestamp_raises_error():
 
 def test_missing_signature_raises_error():
     testPayload = PayloadForTesting()
-    del testPayload.header["svix-signature"]
+    del testPayload.header["hooksniff-signature"]
 
     wh = Webhook(testPayload.secret)
 
@@ -88,7 +88,7 @@ def test_missing_signature_raises_error():
 
 def test_invalid_signature_raises_error():
     testPayload = PayloadForTesting()
-    testPayload.header["svix-signature"] = (
+    testPayload.header["hooksniff-signature"] = (
         "v1,g0hM9SsE+OTPJTGt/tmIKtSyZlE3uFJELVlNIOLJ1OA="
     )
 
@@ -110,9 +110,9 @@ def test_valid_signature_is_valid_and_returns_json():
 def test_valid_unbranded_signature_is_valid_and_returns_json():
     testPayload = PayloadForTesting()
     unbrandedHeaders = {
-        "webhook-id": testPayload.header.get("svix-id"),
-        "webhook-signature": testPayload.header.get("svix-signature"),
-        "webhook-timestamp": testPayload.header.get("svix-timestamp"),
+        "webhook-id": testPayload.header.get("hooksniff-id"),
+        "webhook-signature": testPayload.header.get("hooksniff-signature"),
+        "webhook-timestamp": testPayload.header.get("hooksniff-timestamp"),
     }
     testPayload.header = unbrandedHeaders
 
@@ -149,10 +149,10 @@ def test_multi_sig_payload_is_valid():
     sigs = [
         "v1,Ceo5qEr07ixe2NLpvHk3FH9bwy/WavXrAFQ/9tdO6mc=",
         "v2,Ceo5qEr07ixe2NLpvHk3FH9bwy/WavXrAFQ/9tdO6mc=",
-        testPayload.header["svix-signature"],  # valid signature
+        testPayload.header["hooksniff-signature"],  # valid signature
         "v1,Ceo5qEr07ixe2NLpvHk3FH9bwy/WavXrAFQ/9tdO6mc=",
     ]
-    testPayload.header["svix-signature"] = " ".join(sigs)
+    testPayload.header["hooksniff-signature"] = " ".join(sigs)
 
     wh = Webhook(testPayload.secret)
 

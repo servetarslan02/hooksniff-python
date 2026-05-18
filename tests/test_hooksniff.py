@@ -58,13 +58,13 @@ class TestWebhook:
         with pytest.raises(WebhookVerificationError):
             wh.verify(TEST_PAYLOAD, headers)
 
-    def test_accept_svix_branded_headers(self):
+    def test_accept_hooksniff_branded_headers(self):
         wh = Webhook(TEST_SECRET)
         sig = sign(TEST_SECRET, TEST_MSG_ID, TEST_TIMESTAMP, TEST_PAYLOAD)
         headers = {
-            "svix-id": TEST_MSG_ID,
-            "svix-timestamp": str(TEST_TIMESTAMP),
-            "svix-signature": sig,
+            "hooksniff-id": TEST_MSG_ID,
+            "hooksniff-timestamp": str(TEST_TIMESTAMP),
+            "hooksniff-signature": sig,
         }
         result = wh.verify(TEST_PAYLOAD, headers)
         assert result == {"event": "test"}
