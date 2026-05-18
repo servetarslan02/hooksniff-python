@@ -1,4 +1,4 @@
-# Adapted from Svix SDK for HookSniff
+# HookSniff API client
 # HookSniff API paths: /v1/... (not /v1/... HookSniff paths)
 
 import typing as t
