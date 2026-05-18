@@ -15,6 +15,18 @@ Usage:
 from .api.hooksniff import HookSniff, HookSniffAsync, HookSniffOptions, DEFAULT_SERVER_URL
 from .api.pagination import ListResponse, AsyncListResponse, build_list_response
 from .webhooks import Webhook, WebhookVerificationError
+from .webhook_events import (
+    WebhookEvent,
+    EndpointCreatedEvent,
+    EndpointUpdatedEvent,
+    EndpointDeletedEvent,
+    EndpointEnabledEvent,
+    EndpointDisabledEvent,
+    MessageAttemptExhaustedEvent,
+    MessageAttemptFailingEvent,
+    MessageAttemptRecoveredEvent,
+    parse_webhook_event,
+)
 from .exceptions import (
     HookSniffError,
     BadRequestError,
@@ -44,6 +56,16 @@ __all__ = [
     "build_list_response",
     "Webhook",
     "WebhookVerificationError",
+    "WebhookEvent",
+    "EndpointCreatedEvent",
+    "EndpointUpdatedEvent",
+    "EndpointDeletedEvent",
+    "EndpointEnabledEvent",
+    "EndpointDisabledEvent",
+    "MessageAttemptExhaustedEvent",
+    "MessageAttemptFailingEvent",
+    "MessageAttemptRecoveredEvent",
+    "parse_webhook_event",
     "HookSniffError",
     "BadRequestError",
     "UnauthorizedError",
