@@ -28,7 +28,7 @@ DEFAULT_SERVER_URL = "https://hooksniff-api-1046140057667.europe-west1.run.app"
 class HookSniffOptions:
     debug: bool = False
     server_url: t.Optional[str] = None
-    retry_schedule: t.List[float] = field(default_factory=lambda: [0.5, 1.0, 2.0])
+    retry_schedule: t.List[float] = field(default_factory=lambda: [1.0, 2.0, 4.0])
     timeout: float = 15.0
     proxy: t.Optional[str] = None
 
