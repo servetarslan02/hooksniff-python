@@ -118,6 +118,12 @@ def create_error_from_status(
         502: lambda: BadGatewayError(detail, headers),
         503: lambda: ServiceUnavailableError(detail, headers),
         504: lambda: GatewayTimeoutError(detail, headers),
+    408: RequestTimeoutError,
+    410: GoneError,
+    413: PayloadTooLargeError,
+    501: NotImplementedError_,
+    507: InsufficientStorageError,
+    508: LoopDetectedError,
     }
 
     if status_code == 422:
@@ -158,3 +164,57 @@ class HTTPValidationError(HookSniffError):
     def init_exception(cls, body: dict, status_code: int = 422) -> "HTTPValidationError":
         detail = body.get("detail", [])
         return cls(detail=detail, status_code=status_code)
+
+
+class RequestTimeoutError(HookSniffError):
+    """408 Request Timeout — The server timed out waiting for the request."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(408, message or "Request timeout", headers)
+
+
+class GoneError(HookSniffError):
+    """410 Gone — The resource has been permanently removed."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(410, message or "Gone", headers)
+
+
+class PayloadTooLargeError(HookSniffError):
+    """413 Payload Too Large — The request body exceeds the server limit."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(413, message or "Payload too large", headers)
+
+
+class NotImplementedError_(HookSniffError):
+    """501 Not Implemented — The server does not support this functionality."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(501, message or "Not implemented", headers)
+
+
+class InsufficientStorageError(HookSniffError):
+    """507 Insufficient Storage — The server cannot store the representation."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(507, message or "Insufficient storage", headers)
+
+
+class LoopDetectedError(HookSniffError):
+    """508 Loop Detected — The server detected an infinite loop."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(508, message or "Loop detected", headers)
+
+
+class TimeoutError(HookSniffError):
+    """Timeout — request exceeded the configured timeout (non-HTTP)."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(0, message or "Request timeout", headers)
+
+
+class NetworkError(HookSniffError):
+    """Network error — connection failed, DNS error, etc. (non-HTTP)."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(0, message or "Network error", headers)
+
+
+class AuthenticationError(HookSniffError):
+    """Authentication error — token invalid, expired, or missing."""
+    def __init__(self, message: str | None = None, headers: dict | None = None):
+        super().__init__(401, message or "Authentication failed", headers)
