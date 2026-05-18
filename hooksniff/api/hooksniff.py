@@ -44,7 +44,8 @@ class ClientBase:
             raise ValueError("number of retries must not exceed 5")
 
         host = options.server_url or DEFAULT_SERVER_URL
-        merged_headers = {"user-agent": f"hooksniff-libs/{__version__}/python"}
+        sdk_ua = f"hooksniff-libs/{__version__}/python"
+        merged_headers = {"user-agent": sdk_ua, "x-hooksniff-sdk": sdk_ua}
         if options.headers:
             merged_headers.update(options.headers)
 
