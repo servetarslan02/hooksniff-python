@@ -68,6 +68,36 @@ class PostOptions(BaseOptions):
     idempotency_key: t.Optional[str] = None
 
 
+@dataclass
+class ResponseMetadata:
+    """Response metadata from the last API request.
+
+    Access via ``client.last_response`` after any API call.
+
+    Example::
+
+        endpoints = client.endpoint.list()
+        print(client.last_response.request_id)
+        print(client.last_response.rate_limit_remaining)
+    """
+    status_code: int
+    request_id: t.Optional[str] = None
+    rate_limit_remaining: t.Optional[int] = None
+    rate_limit_reset: t.Optional[int] = None
+    headers: t.Dict[str, str] = t.field(default_factory=dict)
+
+    @classmethod
+    def from_httpx(cls, response: httpx.Response) -> "ResponseMetadata":
+        headers = dict(response.headers)
+        return cls(
+            status_code=response.status_code,
+            request_id=headers.get("x-request-id") or headers.get("x-hooksniff-request-id"),
+            rate_limit_remaining=int(headers["x-ratelimit-remaining"]) if "x-ratelimit-remaining" in headers else None,
+            rate_limit_reset=int(headers["x-ratelimit-reset"]) if "x-ratelimit-reset" in headers else None,
+            headers=headers,
+        )
+
+
 class ApiBase:
     _client: AuthenticatedClient
     _httpx_client: httpx.Client
@@ -75,6 +105,7 @@ class ApiBase:
 
     def __init__(self, client: AuthenticatedClient) -> None:
         self._client = client
+        self.last_response: t.Optional[ResponseMetadata] = None
 
         if self._client.proxy is not None:
             proxy_mounts = {
@@ -179,7 +210,7 @@ class ApiBase:
             httpx_kwargs["headers"]["hooksniff-retry-count"] = str(retry_count)
             response = await self._httpx_async_client.request(**httpx_kwargs)
 
-        return _filter_response_for_errors_response(response)
+        return self._capture_and_filter(response)
 
     def _request_sync(
         self,
@@ -216,6 +247,11 @@ class ApiBase:
             httpx_kwargs["headers"]["hooksniff-retry-count"] = str(retry_count)
             response = self._httpx_client.request(**httpx_kwargs)
 
+        return self._capture_and_filter(response)
+
+    def _capture_and_filter(self, response: httpx.Response) -> httpx.Response:
+        """Capture response metadata then filter for errors."""
+        self.last_response = ResponseMetadata.from_httpx(response)
         return _filter_response_for_errors_response(response)
 
 

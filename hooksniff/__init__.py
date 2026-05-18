@@ -27,6 +27,7 @@ from .webhook_events import (
     MessageAttemptRecoveredEvent,
     parse_webhook_event,
 )
+from .api.common import ResponseMetadata
 from .exceptions import (
     HookSniffError,
     BadRequestError,
