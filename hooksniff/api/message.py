@@ -9,6 +9,7 @@ from ..models import (
     MessageOut,
 )
 from .common import ApiBase, BaseOptions, serialize_params
+from .pagination import ListResponse, build_list_response
 
 
 @dataclass
@@ -70,18 +71,47 @@ def message_in_raw(
 class MessageAsync(ApiBase):
     async def list(
         self, options: MessageListOptions = MessageListOptions()
-    ) -> t.List[MessageOut]:
-        """List webhook deliveries."""
+    ) -> ListResponse[MessageOut]:
+        """List webhook deliveries with pagination support.
+
+        Returns:
+            ListResponse[MessageOut] — iterate with `for msg in response:` or
+            use `response.next()` for manual pagination.
+        """
         response = await self._request_asyncio(
             method="get",
             path="/v1/webhooks",
             query_params=options._query_params(),
             header_params=options._header_params(),
         )
-        data = response.json()
-        if isinstance(data, list):
-            return [MessageOut.model_validate(item) for item in data]
-        return [MessageOut.model_validate(item) for item in data.get("deliveries", data.get("data", data))]
+
+        def _fetch_sync(iterator: str) -> ListResponse[MessageOut]:
+            opts = MessageListOptions(limit=options.limit, iterator=iterator)
+            resp = self._request_sync(
+                method="get",
+                path="/v1/webhooks",
+                query_params=opts._query_params(),
+                header_params=opts._header_params(),
+            )
+            return build_list_response(
+                resp.json(), MessageOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async
+            )
+
+        async def _fetch_async(iterator: str) -> ListResponse[MessageOut]:
+            opts = MessageListOptions(limit=options.limit, iterator=iterator)
+            resp = await self._request_asyncio(
+                method="get",
+                path="/v1/webhooks",
+                query_params=opts._query_params(),
+                header_params=opts._header_params(),
+            )
+            return build_list_response(
+                resp.json(), MessageOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async
+            )
+
+        return build_list_response(
+            response.json(), MessageOut, fetch_fn=_fetch_sync, fetch_async_fn=_fetch_async
+        )
 
     async def create(
         self,
@@ -159,18 +189,33 @@ class MessageAsync(ApiBase):
 class Message(ApiBase):
     def list(
         self, options: MessageListOptions = MessageListOptions()
-    ) -> t.List[MessageOut]:
-        """List webhook deliveries."""
+    ) -> ListResponse[MessageOut]:
+        """List webhook deliveries with pagination support.
+
+        Returns:
+            ListResponse[MessageOut] — iterate with `for msg in response:` or
+            use `response.next()` for manual pagination.
+        """
         response = self._request_sync(
             method="get",
             path="/v1/webhooks",
             query_params=options._query_params(),
             header_params=options._header_params(),
         )
-        data = response.json()
-        if isinstance(data, list):
-            return [MessageOut.model_validate(item) for item in data]
-        return [MessageOut.model_validate(item) for item in data.get("deliveries", data.get("data", data))]
+
+        def _fetch_sync(iterator: str) -> ListResponse[MessageOut]:
+            opts = MessageListOptions(limit=options.limit, iterator=iterator)
+            resp = self._request_sync(
+                method="get",
+                path="/v1/webhooks",
+                query_params=opts._query_params(),
+                header_params=opts._header_params(),
+            )
+            return build_list_response(resp.json(), MessageOut, fetch_fn=_fetch_sync)
+
+        return build_list_response(
+            response.json(), MessageOut, fetch_fn=_fetch_sync
+        )
 
     def create(
         self,
