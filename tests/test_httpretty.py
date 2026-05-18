@@ -9,7 +9,7 @@ def test_octothorpe_in_query_param():
     svx = hooksniff.HookSniff("token",hooksniff.HookSniffOptions(server_url="http://test.example"))
     httpretty.register_uri(
         httpretty.GET,
-        "http://test.example/api/v1/app/app_id/msg?tag=test%23test",
+        "http://test.example/v1/webhooks?tag=test%23test",
         body='{"data":[],"iterator":null,"prevIterator":null,"done":true}'
     )
     svx.message.list("app_id",MessageListOptions(tag="test#test"))

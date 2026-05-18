@@ -1,5 +1,5 @@
 # Adapted from Svix SDK for HookSniff
-# HookSniff API paths: /v1/... (not /api/v1/app/{app_id}/... from Svix)
+# HookSniff API paths: /v1/... (not /v1/... HookSniff paths)
 
 import typing as t
 from dataclasses import dataclass, field

@@ -1,5 +1,5 @@
 # This file is adapted for HookSniff API
-# HookSniff uses /v1/... paths (not /api/v1/app/{app_id}/... from Svix)
+# HookSniff uses /v1/... paths (not /v1/... HookSniff paths)
 # The authenticated user is determined by the JWT token, no app_id needed.
 import typing as t
 from dataclasses import dataclass
