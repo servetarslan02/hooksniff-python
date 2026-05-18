@@ -191,6 +191,9 @@ class ApiBase:
             json_body=json_body,
         )
 
+        if self._client.debug:
+            print(f"[HookSniff] → {httpx_kwargs['method']} {httpx_kwargs['url']}")
+
         response = await self._httpx_async_client.request(**httpx_kwargs)
 
         for retry_count, sleep_time in enumerate(self._client.retry_schedule):
@@ -229,6 +232,10 @@ class ApiBase:
             header_params=header_params,
             json_body=json_body,
         )
+
+        if self._client.debug:
+            print(f"[HookSniff] → {httpx_kwargs['method']} {httpx_kwargs['url']}")
+
         response = self._httpx_client.request(**httpx_kwargs)
         for retry_count, sleep_time in enumerate(self._client.retry_schedule):
             # 429 Rate Limit — respect Retry-After header
@@ -252,6 +259,15 @@ class ApiBase:
     def _capture_and_filter(self, response: httpx.Response) -> httpx.Response:
         """Capture response metadata then filter for errors."""
         self.last_response = ResponseMetadata.from_httpx(response)
+
+        if self._client.debug:
+            import time as _time
+            elapsed_ms = int(response.elapsed.total_seconds() * 1000)
+            print(f"[HookSniff] ← {response.status_code} ({elapsed_ms}ms) {response.request.url}")
+            for name, value in response.headers.items():
+                if name.lower().startswith("x-"):
+                    print(f"[HookSniff]   {name}: {value}")
+
         return _filter_response_for_errors_response(response)
 
 

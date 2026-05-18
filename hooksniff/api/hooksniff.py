@@ -54,6 +54,7 @@ class ClientBase:
             follow_redirects=False,
             raise_on_unexpected_status=True,
             proxy=options.proxy,
+            debug=options.debug,
             headers=options.headers,
         )
         self._client = client

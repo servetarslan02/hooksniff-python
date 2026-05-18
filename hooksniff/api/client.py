@@ -29,6 +29,7 @@ class Client:
     verify_ssl: Union[str, bool, ssl.SSLContext] = attr.ib(True, kw_only=True)
     raise_on_unexpected_status: bool = attr.ib(False, kw_only=True)
     follow_redirects: bool = attr.ib(False, kw_only=True)
+    debug: bool = attr.ib(False, kw_only=True)
 
     def get_headers(self) -> Dict[str, str]:
         """Get headers to be used in all endpoints"""
