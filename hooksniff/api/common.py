@@ -2,7 +2,7 @@ import asyncio
 import random
 import time
 import typing as t
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 import uuid
 import httpx
@@ -84,7 +84,7 @@ class ResponseMetadata:
     request_id: t.Optional[str] = None
     rate_limit_remaining: t.Optional[int] = None
     rate_limit_reset: t.Optional[int] = None
-    headers: t.Dict[str, str] = t.field(default_factory=dict)
+    headers: t.Dict[str, str] = field(default_factory=dict)
 
     @classmethod
     def from_httpx(cls, response: httpx.Response) -> "ResponseMetadata":

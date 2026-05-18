@@ -44,10 +44,14 @@ class ClientBase:
             raise ValueError("number of retries must not exceed 5")
 
         host = options.server_url or DEFAULT_SERVER_URL
+        merged_headers = {"user-agent": f"hooksniff-libs/{__version__}/python"}
+        if options.headers:
+            merged_headers.update(options.headers)
+
         client = AuthenticatedClient(
             base_url=host,
             token=auth_token,
-            headers={"user-agent": f"hooksniff-libs/{__version__}/python"},
+            headers=merged_headers,
             verify_ssl=True,
             retry_schedule=options.retry_schedule,
             timeout=options.timeout,
@@ -55,7 +59,6 @@ class ClientBase:
             raise_on_unexpected_status=True,
             proxy=options.proxy,
             debug=options.debug,
-            headers=options.headers,
         )
         self._client = client
 
