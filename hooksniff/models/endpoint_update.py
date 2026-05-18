@@ -1,32 +1,17 @@
-# this file is @generated
-import typing as t
+# Adapted for HookSniff API — matches UpdateEndpointRequest
+from typing import Any, Dict, List, Optional
 
 from .common import BaseModel
 
 
 class EndpointUpdate(BaseModel):
-    channels: t.Optional[t.List[str]] = None
-    """List of message channels this endpoint listens to (omit for all)."""
-
-    description: t.Optional[str] = None
-
-    disabled: t.Optional[bool] = None
-
-    filter_types: t.Optional[t.List[str]] = None
-
-    metadata: t.Optional[t.Dict[str, str]] = None
-
-    rate_limit: t.Optional[int] = None
-    """Deprecated, use `throttleRate` instead."""
-
-    throttle_rate: t.Optional[int] = None
-    """Maximum messages per second to send to this endpoint.
-
-    Outgoing messages will be throttled to this rate."""
-
-    uid: t.Optional[str] = None
-    """Optional unique identifier for the endpoint."""
-
     url: str
-
-    version: t.Optional[int] = None
+    description: Optional[str] = None
+    is_active: bool = True
+    allowed_ips: Optional[List[str]] = None
+    event_filter: Optional[List[str]] = None
+    custom_headers: Optional[Dict[str, Any]] = None
+    retry_policy: Optional[Dict[str, Any]] = None
+    routing_strategy: Optional[str] = None
+    fallback_url: Optional[str] = None
+    format: Optional[str] = None
