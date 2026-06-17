@@ -5,13 +5,13 @@ Official Python SDK for [HookSniff](https://hooksniff.vercel.app) — the webhoo
 ## Installation
 
 ```bash
-pip install hooksniff
+pip install hooksniff-python
 ```
 
 ## Quick Start
 
 ```python
-from hooksniff import HookSniff
+from hooksniff_python import HookSniff
 
 hs = HookSniff("hr_live_...")
 
@@ -133,7 +133,7 @@ delivery = hs.webhook.replay("msg_123")
 ### Webhook Verification
 
 ```python
-from hooksniff import Webhook, WebhookVerificationError
+from hooksniff_python import Webhook, WebhookVerificationError
 
 wh = Webhook("whsec_...")
 
@@ -150,7 +150,7 @@ def handle_webhook(request):
 ### Error Handling
 
 ```python
-from hooksniff import AuthenticationError, NotFoundError, RateLimitError
+from hooksniff_python import AuthenticationError, NotFoundError, RateLimitError
 
 try:
     hs.endpoint.get("invalid_id")

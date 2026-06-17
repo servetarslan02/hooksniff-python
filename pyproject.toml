@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "hooksniff"
-version = "0.4.0"
+name = "hooksniff-python"
+version = "0.4.1"
 description = "Official HookSniff SDK for Python - Webhook infrastructure for developers"
 readme = "README.md"
 license = "MIT"
