@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hooksniff-python"
-version = "0.4.1"
+version = "0.4.2"
 description = "Official HookSniff SDK for Python - Webhook infrastructure for developers"
 readme = "README.md"
 license = "MIT"

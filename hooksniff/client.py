@@ -23,6 +23,8 @@ Usage:
 from typing import Any, Dict
 from .http_client import HttpClient
 from .resources import (
+    BroadcastResource,
+    TransformResource,
     ApplicationResource,
     EndpointResource,
     WebhookResource,
@@ -102,6 +104,8 @@ class HookSniff:
         self.sso = SsoResource(self.http)
         self.custom_domain = CustomDomainResource(self.http)
         self.environment = EnvironmentResource(self.http)
+        self.broadcast = BroadcastResource(self.http)
+        self.transform = TransformResource(self.http)
 
     def me(self) -> Dict[str, Any]:
         """Get current user profile."""
