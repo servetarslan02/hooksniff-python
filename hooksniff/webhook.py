@@ -81,5 +81,5 @@ class Webhook:
             secret_key = secret_bytes
         
         return base64.b64encode(
-            hmac.new(secret_key, content.encode("utf-8"), hashlib.sha256).digest()
+            hmac.HMAC(secret_key, content.encode("utf-8"), hashlib.sha256).digest()
         ).decode("utf-8")

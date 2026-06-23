@@ -11,7 +11,7 @@ pip install hooksniff-python
 ## Quick Start
 
 ```python
-from hooksniff_python import HookSniff
+from hooksniff import HookSniff
 
 hs = HookSniff("hr_live_...")
 
@@ -133,7 +133,7 @@ delivery = hs.webhook.replay("msg_123")
 ### Webhook Verification
 
 ```python
-from hooksniff_python import Webhook, WebhookVerificationError
+from hooksniff import Webhook, WebhookVerificationError
 
 wh = Webhook("whsec_...")
 
@@ -150,7 +150,7 @@ def handle_webhook(request):
 ### Error Handling
 
 ```python
-from hooksniff_python import AuthenticationError, NotFoundError, RateLimitError
+from hooksniff import AuthenticationError, NotFoundError, RateLimitError
 
 try:
     hs.endpoint.get("invalid_id")
